@@ -1,30 +1,86 @@
-
-
 package com.project.backend.models;
 
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Entity Doctor
+ */
+@Entity
+@Table(name = "doctors")
 public class Doctor {
-    private int doctorId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; // Primary key
+
     private String name;
+
     private String specialization;
+
     private String phone;
 
-    public Doctor(int doctorId, String name, String specialization, String phone) {
-        this.doctorId = doctorId;
+    /**
+     * Danh sách khung giờ có sẵn
+     */
+    @ElementCollection
+    @CollectionTable(name = "doctor_available_times", joinColumns = @JoinColumn(name = "doctor_id"))
+    @Column(name = "available_time")
+    private List<String> availableTimes = new ArrayList<>(); // có thể lưu giờ dưới dạng HH:mm
+
+    public Doctor() {
+    }
+
+    public Doctor(String name, String specialization, String phone) {
         this.name = name;
         this.specialization = specialization;
         this.phone = phone;
     }
 
-    // Getters and setters
-    public int getDoctorId() { return doctorId; }
-    public void setDoctorId(int doctorId) { this.doctorId = doctorId; }
+    // Getter và Setter
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getSpecialization() { return specialization; }
-    public void setSpecialization(String specialization) { this.specialization = specialization; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public List<String> getAvailableTimes() {
+        return availableTimes;
+    }
+
+    public void setAvailableTimes(List<String> availableTimes) {
+        this.availableTimes = availableTimes;
+    }
+
+    public void addAvailableTime(String time) {
+        this.availableTimes.add(time);
+    }
 }
