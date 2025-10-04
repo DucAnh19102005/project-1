@@ -1,14 +1,31 @@
-# 1. Chọn base image
-FROM openjdk:17-jdk-slim
+# -------------------
+# Stage 1: Build
+# -------------------
+FROM maven:3.9.2-eclipse-temurin-17 AS build
 
-# 2. Tạo thư mục app trong container
+# Thiết lập thư mục làm việc
 WORKDIR /app
 
-# 3. Copy file JAR đã build vào container
-COPY target/backend-0.0.1-SNAPSHOT.jar app.jar
+# Copy pom.xml và source code
+COPY pom.xml .
+COPY src ./src
 
-# 4. Expose port của Spring Boot
+# Build project và tạo JAR
+RUN mvn clean package -DskipTests
+
+# -------------------
+# Stage 2: Runtime
+# -------------------
+FROM openjdk:17-jdk-slim
+
+# Thiết lập thư mục làm việc
+WORKDIR /app
+
+# Copy JAR từ stage build
+COPY --from=build /app/target/backend-0.0.1-SNAPSHOT.jar app.jar
+
+# Expose port Spring Boot
 EXPOSE 8080
 
-# 5. Lệnh chạy ứng dụng
+# Lệnh chạy ứng dụng
 ENTRYPOINT ["java","-jar","app.jar"]
